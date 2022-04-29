@@ -4,16 +4,22 @@ const HTMLWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const isProduction = process.env.NODE_ENV === 'production';
+const ESLintWebpackPlugin = require('eslint-webpack-plugin');
+const StylelintWebpackPlugin = require('stylelint-webpack-plugin');
+const WebpackDevServer = require('webpack-dev-server');
+const webpack = require('webpack');
 const isDevelopment = !isProduction;
 const filename = (ext) =>
     isDevelopment ? `bundle${ext}` : `bundle.[fullhash].${ext}`;
-const ESLintWebpackPlugin = require('eslint-webpack-plugin');
-const StylelintWebpackPlugin = require('stylelint-webpack-plugin');
 
-module.exports = {
+const config = {
     context: path.resolve(__dirname, 'src'),
     mode: 'development',
-    entry: './index.js',
+    entry: [
+        '@babel/polyfill',
+        './index.js',
+        'webpack-dev-server/client?http://localhost:4220',
+    ],
     output: {
         filename: filename('js'),
         path: path.resolve(__dirname, 'dist'),
@@ -26,10 +32,6 @@ module.exports = {
         },
     },
     devtool: isDevelopment ? 'inline-source-map' : 'source-map',
-    devServer: {
-        port: 4220,
-        hot: isDevelopment,
-    },
     plugins: [
         new CleanWebpackPlugin(),
         new HTMLWebpackPlugin({
@@ -48,7 +50,7 @@ module.exports = {
             ],
         }),
         new MiniCssExtractPlugin({
-            filename: filename('css'),
+            filename: 'style.css',
         }),
         new ESLintWebpackPlugin({
             overrideConfigFile: path.resolve(__dirname, '.eslintrc'),
@@ -56,28 +58,19 @@ module.exports = {
             files: '**/*.js',
         }),
         new StylelintWebpackPlugin({
-            overrideConfigFile: path.resolve(__dirname, '.eslintrc'),
+            overrideConfigFile: path.resolve(__dirname, '.prettierrc'),
         }),
+        new webpack.HotModuleReplacementPlugin(),
     ],
     module: {
         rules: [
             {
-                test: '/.s[ac]ss$/i',
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                        options: {
-                            hmr: isDevelopment,
-                            reloadAll: true,
-                        },
-                    },
-                    'css-loader',
-                    'sass-loader',
-                ],
+                test: /\.(sass|css|scss)$/i,
+                use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
             },
             {
-                test: '/.js$/',
-                exclude: '/node_modules/',
+                test: /.js$/,
+                exclude: /node_modules/,
                 use: [
                     {
                         loader: 'babel-loader',
@@ -90,3 +83,15 @@ module.exports = {
         ],
     },
 };
+
+const compiler = webpack(config);
+
+const server = new WebpackDevServer(
+    { hot: true, client: false, port: 4220 },
+    compiler
+);
+
+(async () => {
+    await server.start();
+    console.log('server has been started');
+})();

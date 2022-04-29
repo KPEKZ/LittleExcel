@@ -1,13 +1,18 @@
 {
-  "extends": "stylelint-config-recommended",
+  "extends": [
+    "stylelint-config-standard-scss",
+    "stylelint-config-prettier-scss"
+  ],
   "rules": {
-    "at-rule-no-unknown": [
-      true,
-      {
-        "ignoreAtRules": ["extends"]
-      }
-    ],
+    "at-rule-no-unknown": null,
+    "scss/at-rule-no-unknown": true,
     "block-no-empty": null,
-    "unit-allowed-list": ["em", "rem", "s"]
-  }
+    "scss/at-import-no-partial-leading-underscore": null,
+    "color-function-notation": "legacy",
+    "declaration-empty-line-before": "never",
+    "selector-class-pattern": "."
+  },
+  "plugins": [
+    "stylelint-scss"
+  ]
 }
