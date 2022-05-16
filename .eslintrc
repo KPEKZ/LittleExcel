@@ -1,23 +1,36 @@
 {
-  "parser": "@babel/eslint-parser",
-  "rules": {
-    "prettier/prettier": "error",
-    "no-unused-vars": "warn",
-    "no-console": "off",
-    "func-names": "off",
-    "no-process-exit": "off",
-    "object-shorthand": "off",
-    "class-methods-use-this": "off"
-  },
-  "extends": [
-    "airbnb",
-    "prettier",
-    "plugin:node/recommended"
-  ],
-  "plugins": ["prettier"],
   "env": {
     "es6": true,
     "browser": true,
     "node": true
+  },
+  "extends": [
+    "eslint:recommended",
+    "plugin:import/recommended",
+    "plugin:prettier/recommended",
+    "plugin:import/errors",
+    "plugin:import/warnings",
+    "prettier"
+  ],
+  "parser": "@babel/eslint-parser",
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "plugins": [
+    "import",
+    "prettier"
+  ],
+  "rules": {
+    "prettier/prettier": [   "warn",   {
+      "endOfLine": "auto"
+    }
+  ],
+    "import/prefer-default-export": "off",
+    "class-methods-use-this": "off",
+    "import/no-unresolved": "off",
+    "no-unused-vars": "warn"
+  },
+  "settings": {
+    "import/resolver": "node"
   }
 }
