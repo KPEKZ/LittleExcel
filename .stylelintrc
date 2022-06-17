@@ -10,7 +10,8 @@
     "scss/at-import-no-partial-leading-underscore": null,
     "color-function-notation": "legacy",
     "declaration-empty-line-before": "never",
-    "selector-class-pattern": "."
+    "selector-class-pattern": ".",
+    "no-descending-specificity" : "never"
   },
   "plugins": [
     "stylelint-scss"
